@@ -10,17 +10,27 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [error, setError] = useState('');
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate a brief loading state for demo
-    await new Promise((r) => setTimeout(r, 800));
-    signIn(email, name || email.split('@')[0]);
-    setLoading(false);
-    navigate('/');
+    setError('');
+
+    try {
+      if (isSignUp) {
+        await signUp(email, password, name);
+      } else {
+        await signIn(email, password);
+      }
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -99,6 +109,13 @@ export default function AuthPage() {
                 : 'Access your AI-powered medical document analyzer.'}
             </p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-sm">
+              {error}
+            </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -183,19 +200,43 @@ export default function AuthPage() {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => { signIn('demo@medbuddy.com', 'Demo User'); navigate('/'); }}
-              className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-charcoal/10 text-sm text-charcoal/60 hover:border-moss/30 hover:bg-moss/5 transition-all"
+              onClick={async () => {
+                setLoading(true);
+                setError('');
+                try {
+                  await signIn('demo@medbuddy.com', 'demo123');
+                  navigate('/');
+                } catch (err) {
+                  setError(err.message);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              disabled={loading}
+              className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-charcoal/10 text-sm text-charcoal/60 hover:border-moss/30 hover:bg-moss/5 transition-all disabled:opacity-60"
             >
               <HeartPulse className="w-4 h-4 text-clay" />
               Demo Login
             </button>
             <button
               type="button"
-              onClick={() => { signIn('guest@medbuddy.com', 'Guest'); navigate('/'); }}
-              className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-charcoal/10 text-sm text-charcoal/60 hover:border-moss/30 hover:bg-moss/5 transition-all"
+              onClick={async () => {
+                setLoading(true);
+                setError('');
+                try {
+                  await signIn('patient@example.com', 'patient123');
+                  navigate('/');
+                } catch (err) {
+                  setError(err.message);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              disabled={loading}
+              className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-charcoal/10 text-sm text-charcoal/60 hover:border-moss/30 hover:bg-moss/5 transition-all disabled:opacity-60"
             >
               <User className="w-4 h-4 text-moss" />
-              Guest Access
+              Patient Demo
             </button>
           </div>
 

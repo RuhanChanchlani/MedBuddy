@@ -29,10 +29,6 @@ export default function DiagnosticShuffler() {
       
       <div className="relative w-full max-w-[200px] h-[120px] mt-8">
         {cards.map((card, i) => {
-          // i === 0 is the front card
-          const isFront = i === 0;
-          const isMiddle = i === 1;
-          
           return (
             <div 
               key={card.id}
