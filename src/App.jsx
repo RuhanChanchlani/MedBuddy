@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Upload, FileText, Activity, Layers, HeartPulse, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Upload, FileText, Activity, Layers, HeartPulse, CheckCircle2, AlertTriangle, LogOut, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -7,12 +8,23 @@ import DiagnosticShuffler from './components/DiagnosticShuffler';
 import TelemetryTypewriter from './components/TelemetryTypewriter';
 import ProtocolScheduler from './components/ProtocolScheduler';
 import UploadAnalyzeModal from './components/UploadAnalyzeModal';
+import { useAuth } from './context/AuthContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function App() {
   const containerRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const { user, isAuthenticated, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleUploadClick = () => {
+    if (!isAuthenticated) {
+      navigate('/auth');
+      return;
+    }
+    setModalOpen(true);
+  };
 
   useEffect(() => {
     let ctx = gsap.context(() => {
@@ -86,9 +98,26 @@ export default function App() {
             <a href="#philosophy" className="hover:text-moss transition-colors">Philosophy</a>
             <a href="#protocol" className="hover:text-moss transition-colors">Protocol</a>
           </div>
-          <button onClick={() => setModalOpen(true)} className="bg-moss text-cream px-6 py-2 rounded-full text-sm font-medium magnetic whitespace-nowrap">
-            Upload Summary
-          </button>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <button onClick={handleUploadClick} className="bg-moss text-cream px-6 py-2 rounded-full text-sm font-medium magnetic whitespace-nowrap">
+                Upload Summary
+              </button>
+              <div className="flex items-center gap-2 text-sm text-charcoal/60">
+                <div className="w-7 h-7 rounded-full bg-moss/10 flex items-center justify-center">
+                  <User className="w-3.5 h-3.5 text-moss" />
+                </div>
+                <span className="hidden md:inline font-medium text-charcoal/80">{user?.name}</span>
+              </div>
+              <button onClick={signOut} className="hover:bg-charcoal/5 p-2 rounded-full transition-colors" title="Sign Out">
+                <LogOut className="w-4 h-4 text-charcoal/40" />
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => navigate('/auth')} className="bg-moss text-cream px-6 py-2 rounded-full text-sm font-medium magnetic whitespace-nowrap">
+              Sign In
+            </button>
+          )}
         </div>
       </nav>
 
@@ -119,7 +148,7 @@ export default function App() {
             The AI that sits between a patient and confusion. Upload your discharge summary or prescription for a clinically accurate, plain-language translation.
           </p>
           <div className="hero-text flex flex-col sm:flex-row gap-4">
-            <button onClick={() => setModalOpen(true)} className="bg-white text-moss px-8 py-4 rounded-[2rem] font-medium flex items-center justify-center gap-3 magnetic">
+            <button onClick={handleUploadClick} className="bg-white text-moss px-8 py-4 rounded-[2rem] font-medium flex items-center justify-center gap-3 magnetic">
               <Upload className="w-5 h-5" />
               Upload Document
             </button>
@@ -142,7 +171,7 @@ export default function App() {
                 Our parsing engine ingests complex medical terminology and extracts a structured, actionable telemetry feed without hallucinating medical advice.
               </p>
               
-              <div onClick={() => setModalOpen(true)} className="bg-moss text-cream rounded-[2rem] p-8 flex flex-col items-center justify-center text-center mt-8 hover:bg-moss/90 transition-colors pointer-events-auto cursor-pointer border border-transparent hover:border-clay/30">
+              <div onClick={handleUploadClick} className="bg-moss text-cream rounded-[2rem] p-8 flex flex-col items-center justify-center text-center mt-8 hover:bg-moss/90 transition-colors pointer-events-auto cursor-pointer border border-transparent hover:border-clay/30">
                 <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-6">
                   <Upload className="w-6 h-6 text-clay -mt-1" />
                 </div>
