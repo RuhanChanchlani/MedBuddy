@@ -1,11 +1,13 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, status
+from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import uvicorn
 import os
 import json
+import hmac
+import hashlib
 from dotenv import load_dotenv
 
 import google.generativeai as genai
@@ -216,6 +218,43 @@ async def get_history(current_user: User = Depends(get_current_user), db: Sessio
     """
     reports = db.query(AnalysisReport).filter(AnalysisReport.user_id == current_user.id).all()
     return reports
+
+# --- Webhook Routes ---
+@app.post("/api/v1/webhook/github", tags=["webhooks"])
+async def github_webhook(request: Request):
+    """
+    Handles incoming GitHub webhooks for repository events.
+    Verifies signature if GITHUB_WEBHOOK_SECRET is set.
+    """
+    payload = await request.body()
+    signature = request.headers.get("X-Hub-Signature-256")
+    
+    secret = os.getenv("GITHUB_WEBHOOK_SECRET")
+    if secret and signature:
+        # Verify the signature
+        hash_object = hmac.new(secret.encode(), payload, hashlib.sha256)
+        expected_signature = f"sha256={hash_object.hexdigest()}"
+        
+        if not hmac.compare_digest(signature, expected_signature):
+            raise HTTPException(status_code=403, detail="Invalid webhook signature")
+
+    # Parse the payload
+    try:
+        data = json.loads(payload)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON payload")
+
+    event_type = request.headers.get("X-GitHub-Event", "unknown")
+    print(f"Received GitHub Webhook: {event_type}")
+
+    # Log specific event details
+    if event_type == "push":
+        repo_name = data.get("repository", {}).get("full_name")
+        branch = data.get("ref", "").replace("refs/heads/", "")
+        sender = data.get("sender", {}).get("login")
+        print(f"Push to {repo_name} on branch {branch} by {sender}")
+    
+    return {"status": "success", "event": event_type}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

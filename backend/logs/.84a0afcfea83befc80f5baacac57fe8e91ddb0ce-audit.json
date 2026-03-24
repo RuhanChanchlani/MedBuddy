@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\RUHAN\\.ai_completion\\backend\\logs\\.84a0afcfea83befc80f5baacac57fe8e91ddb0ce-audit.json",
+    "files": [
+        {
+            "date": 1774262085456,
+            "name": "C:\\Users\\RUHAN\\.ai_completion\\backend\\logs\\application-2026-03-23.log",
+            "hash": "f9fdf8e9044fb248596fff6a0c5f168085a8ea4d3796671f50034f27238b38d5"
+        },
+        {
+            "date": 1774323584891,
+            "name": "C:\\Users\\RUHAN\\.ai_completion\\backend\\logs\\application-2026-03-24.log",
+            "hash": "602250e1b978181d23b7f52ac0baec0387560eebaf5ec26d73e9839c4da04a60"
+        }
+    ],
+    "hashType": "sha256"
+}

@@ -1,0 +1,18 @@
+{"level":"info","message":"✅ MedBuddy Production-Ready Backend Running on Port 8000","service":"medbuddy-backend","timestamp":"2026-03-23 16:04:45"}
+{"level":"info","message":"Environment: development","service":"medbuddy-backend","timestamp":"2026-03-23 16:04:45"}
+{"level":"info","message":"✅ MedBuddy Production-Ready Backend Running on Port 8000","service":"medbuddy-backend","timestamp":"2026-03-23 16:06:53"}
+{"level":"info","message":"Environment: development","service":"medbuddy-backend","timestamp":"2026-03-23 16:06:53"}
+{"level":"info","message":"✅ MedBuddy Production-Ready Backend Running on Port 8000","service":"medbuddy-backend","timestamp":"2026-03-23 16:07:35"}
+{"level":"info","message":"Environment: development","service":"medbuddy-backend","timestamp":"2026-03-23 16:07:35"}
+{"level":"info","message":"✅ MedBuddy Production-Ready Backend Running on Port 8000","service":"medbuddy-backend","timestamp":"2026-03-23 16:07:47"}
+{"level":"info","message":"Environment: development","service":"medbuddy-backend","timestamp":"2026-03-23 16:07:47"}
+{"level":"info","message":"✅ MedBuddy Production-Ready Backend Running on Port 8000","service":"medbuddy-backend","timestamp":"2026-03-23 16:09:50"}
+{"level":"info","message":"Environment: development","service":"medbuddy-backend","timestamp":"2026-03-23 16:09:50"}
+{"level":"info","message":"✅ MedBuddy Production-Ready Backend Running on Port 8000","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:33"}
+{"level":"info","message":"Environment: development","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:33"}
+{"level":"info","message":"New user registered: testuser_1774262505100","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:45"}
+{"level":"info","message":"User logged in: testuser_1774262505100","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:45"}
+{"level":"info","message":"Analyzing text input","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:45"}
+{"level":"info","message":"Starting AI analysis for text input","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:45"}
+{"level":"error","message":"AI analysis failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [404 Not Found] models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:45"}
+{"level":"error","message":"Analysis process failed: AI analysis service unavailable or failed.","service":"medbuddy-backend","timestamp":"2026-03-23 16:11:45"}
