@@ -52,7 +52,7 @@ export default function DiagnosisChatbot({ docContext }) {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
       {/* Chat Window */}
       <div 
         className={`bg-charcoal text-cream w-[90vw] sm:w-[400px] h-[500px] max-h-[80vh] rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] mb-6 flex flex-col border border-white/10 overflow-hidden transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100 visible' : 'scale-90 opacity-0 invisible'}`}

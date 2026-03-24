@@ -15,9 +15,12 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api', routes);
 
 // Start server
-app.listen(config.PORT, () => {
+app.listen(config.PORT, '0.0.0.0', () => {
   console.log(`MedBuddy Backend running on port ${config.PORT}`);
   if (!config.ANTHROPIC_API_KEY) {
     console.warn('WARNING: ANTHROPIC_API_KEY is not set in environment variables!');
   }
 });
+
+// Keep the process alive
+setInterval(() => {}, 1000);

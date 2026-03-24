@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://localhost:5000/api';
+const BACKEND_URL = 'http://127.0.0.1:5005/api';
 
 /**
  * Analyze a medical document using the MedBuddy backend.
@@ -20,10 +20,11 @@ export async function analyzeDocument(fileOrText, docType = 'auto', lang = 'Engl
 
   if (typeof fileOrText === 'string') {
     payload.text = fileOrText;
-  } else if (fileOrText instanceof File) {
+  } else if (fileOrText && (fileOrText instanceof File || fileOrText.name)) {
     const reader = new FileReader();
-    const base64Promise = new Promise((resolve) => {
+    const base64Promise = new Promise((resolve, reject) => {
       reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+      reader.onerror = (e) => reject(new Error('Failed to read file'));
       reader.readAsDataURL(fileOrText);
     });
     payload.fileData = await base64Promise;

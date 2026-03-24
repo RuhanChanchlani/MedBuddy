@@ -140,11 +140,11 @@ export default function Dashboard() {
       </section>
 
       {/* Features: The Precision Micro-UI Dashboard */}
-      <section id="intelligence" className="py-24 md:py-32 px-4 md:px-16 bg-cream">
+      <section id="intelligence" className="py-24 md:py-32 px-4 md:px-16 bg-cream relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-start">
             
-            <div className="lg:col-span-4 sticky top-32">
+            <div className="lg:col-span-4 lg:sticky top-32 z-20">
               <span className="text-clay font-mono text-sm uppercase tracking-widest mb-4 block">01 / Intelligence</span>
               <h3 className="text-4xl lg:text-5xl font-serif italic text-moss mb-6 leading-tight">Functional<br/>Artifacts.</h3>
               <p className="text-charcoal/70 mb-8 leading-relaxed">
@@ -187,7 +187,7 @@ export default function Dashboard() {
       </section>
 
       {/* Sticky Stacking Archive (Protocol) */}
-      <section id="protocol" className="relative bg-cream">
+      <section id="protocol" className="relative bg-cream z-10">
         
         {/* Card 1: Diagnosis */}
         <div className="stack-card sticky top-0 h-screen w-full bg-cream border-t border-black/5 flex items-center justify-center p-8 origin-top">

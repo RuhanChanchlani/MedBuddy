@@ -5,6 +5,8 @@ import { analyzeDocument } from '../services/api';
 export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete }) {
   const [file, setFile] = useState(null);
   const [docType, setDocType] = useState('auto');
+  const [lang, setLang] = useState('English');
+  const [age, setAge] = useState('');
   const [dragOver, setDragOver] = useState(false);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -47,7 +49,7 @@ export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete
     setError(null);
     setResult(null);
     try {
-      const data = await analyzeDocument(file, docType);
+      const data = await analyzeDocument(file, docType, lang, age);
       setResult(data);
       if (onAnalysisComplete) onAnalysisComplete(data);
     } catch (err) {
@@ -132,8 +134,8 @@ export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete
               </div>
 
               {/* Options Row */}
-              <div className="flex flex-wrap gap-4 items-center justify-between">
-                <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div className="flex flex-wrap gap-3">
                   {['auto', 'prescription', 'discharge_summary', 'lab_report'].map((type) => (
                     <button
                       key={type}
@@ -148,6 +150,25 @@ export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete
                     </button>
                   ))}
                 </div>
+                <div className="flex gap-3">
+                   <input 
+                     type="number" 
+                     placeholder="Age (Optional)" 
+                     value={age}
+                     onChange={(e) => setAge(e.target.value)}
+                     className="px-4 py-2 rounded-full text-sm border border-charcoal/20 bg-transparent outline-none focus:border-moss/50 w-32"
+                   />
+                   <select 
+                     value={lang}
+                     onChange={(e) => setLang(e.target.value)}
+                     className="px-4 py-2 rounded-full text-sm border border-charcoal/20 bg-transparent outline-none focus:border-moss/50 cursor-pointer"
+                   >
+                     <option value="English">English</option>
+                     <option value="Hindi">Hindi</option>
+                   </select>
+                </div>
+              </div>
+              <div className="flex justify-end">
                 <button
                   onClick={handleAnalyze}
                   disabled={!file || loading}
@@ -280,6 +301,26 @@ export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete
                       </li>
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {/* Jargon Comparison */}
+              {result.jargon_comparison?.length > 0 && (
+                <div className="bg-white/50 backdrop-blur-sm rounded-[2rem] p-8 border border-moss/10">
+                  <div className="flex items-center gap-2 mb-6">
+                    <FileText className="w-5 h-5 text-moss" />
+                    <span className="font-mono text-xs uppercase tracking-widest text-charcoal/50">Jargon Translation</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {result.jargon_comparison.map((jargon, i) => (
+                      <div key={i} className="bg-white p-4 rounded-2xl border border-black/5 shadow-sm">
+                        <div className="text-xs font-mono text-clay mb-2 uppercase">Original Document</div>
+                        <p className="text-charcoal/80 font-serif italic mb-4">"{jargon.original}"</p>
+                        <div className="text-xs font-mono text-moss mb-2 uppercase">Plain English</div>
+                        <p className="text-charcoal text-sm">{jargon.plain}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 

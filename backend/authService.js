@@ -1,5 +1,9 @@
 // In-memory user store (simulates a database)
-const userStore = {};
+const userStore = {
+  'demo@medbuddy.com': { name: 'Demo User', email: 'demo@medbuddy.com', password: 'demo123' },
+  'patient@example.com': { name: 'John Doe', email: 'patient@example.com', password: 'patient123' },
+  'doctor@hospital.com': { name: 'Dr. Smith', email: 'doctor@hospital.com', password: 'doctor123' }
+};
 
 module.exports = {
   login: async (email, password) => {
