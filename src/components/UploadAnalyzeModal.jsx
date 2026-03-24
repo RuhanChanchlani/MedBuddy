@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Upload, X, FileText, Pill, AlertTriangle, CheckCircle2, Loader2, HeartPulse } from 'lucide-react';
 import { analyzeDocument } from '../services/api';
 
-export default function UploadAnalyzeModal({ isOpen, onClose }) {
+export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete }) {
   const [file, setFile] = useState(null);
   const [docType, setDocType] = useState('auto');
   const [dragOver, setDragOver] = useState(false);
@@ -49,6 +49,7 @@ export default function UploadAnalyzeModal({ isOpen, onClose }) {
     try {
       const data = await analyzeDocument(file, docType);
       setResult(data);
+      if (onAnalysisComplete) onAnalysisComplete(data);
     } catch (err) {
       setError(err.message || 'Analysis failed. Please try again.');
     } finally {

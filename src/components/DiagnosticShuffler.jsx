@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Activity } from 'lucide-react';
 
-export default function DiagnosticShuffler() {
+export default function DiagnosticShuffler({ result }) {
   const [cards, setCards] = useState([
     { id: 1, label: 'Diagnostic Confidence', value: '98.4%', highlight: 'text-moss' },
     { id: 2, label: 'Medication Conflicts', value: 'None Detected', highlight: 'text-clay' },
     { id: 3, label: 'Priority Follow-ups', value: '2 Required', highlight: 'text-charcoal' }
   ]);
+
+  useEffect(() => {
+    if (result) {
+      setCards([
+        { id: 1, label: 'Medicines Found', value: `${result.medications?.length || 0} items`, highlight: 'text-moss' },
+        { id: 2, label: 'Safety Alerts', value: `${result.warnings?.length || 0} active`, highlight: 'text-clay' },
+        { id: 3, label: 'Follow-up Items', value: `${result.follow_up?.length || 0} tasks`, highlight: 'text-charcoal' }
+      ]);
+    }
+  }, [result]);
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -1,57 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { FileText } from 'lucide-react';
 
-const MESSAGES = [
-  "> INGESTING DISCHARGE_SUMMARY_v2.PDF",
-  "> EXTRACTING DIAGNOSIS: HYPERTENSION_STAGE_2",
-  "> TRANSLATING TO PLAIN_LANGUAGE...",
-  "> VERIFYING MEDICATION SCHEDULE...",
-  "> CROSS_CHECKING DRUG INTERACTIONS",
-  "> GENERATING FOLLOW_UP PROTOCOL",
-  "> SYSTEM OPTIMAL."
-];
-
-export default function TelemetryTypewriter() {
-  const [lines, setLines] = useState([MESSAGES[0]]);
-  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+export default function TelemetryTypewriter({ text }) {
+  const [displayText, setDisplayText] = useState('');
+  const [index, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (currentLineIndex >= MESSAGES.length - 1) return;
+    if (!text) return;
+    setDisplayText('');
+    setCurrentIndex(0);
+  }, [text]);
+
+  useEffect(() => {
+    if (!text || index >= text.length) return;
 
     const timer = setTimeout(() => {
-      const nextIndex = currentLineIndex + 1;
-      setLines(prev => {
-        const newLines = [...prev, MESSAGES[nextIndex]];
-        if (newLines.length > 5) newLines.shift(); // keep only last 5
-        return newLines;
-      });
-      setCurrentLineIndex(nextIndex);
-    }, Math.random() * 1500 + 1000); // Random delay between 1-2.5s
+      setDisplayText(prev => prev + text[index]);
+      setCurrentIndex(prev => prev + 1);
+    }, 20);
 
     return () => clearTimeout(timer);
-  }, [currentLineIndex]);
+  }, [index, text]);
 
   return (
     <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-black/5 flex flex-col h-[300px] justify-between">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-clay animate-pulse" />
-          <span className="font-mono text-xs text-charcoal/60 uppercase tracking-wider">Neural Stream</span>
+          <span className="font-mono text-xs text-charcoal/60 uppercase tracking-wider">Clinical Translation</span>
         </div>
         <FileText className="text-moss/40 w-5 h-5" />
       </div>
-      <div className="font-mono text-charcoal space-y-3 text-xs md:text-sm flex-1 overflow-hidden flex flex-col justify-end">
-        {lines.map((line, i) => (
-          <p 
-            key={i} 
-            className={`flex items-center gap-2 ${i === lines.length - 1 ? 'text-clay' : 'text-moss/60'}`}
-          >
-            {line}
-            {i === lines.length - 1 && currentLineIndex < MESSAGES.length - 1 && (
-              <span className="w-2 h-4 bg-clay animate-pulse inline-block" />
-            )}
-          </p>
-        ))}
+      <div className="font-serif italic text-charcoal text-sm md:text-base flex-1 overflow-y-auto leading-relaxed">
+        {displayText}
+        {text && index < text.length && (
+          <span className="w-2 h-4 bg-clay animate-pulse inline-block ml-1" />
+        )}
+        {!text && <p className="text-charcoal/40">Waiting for clinical document input...</p>}
       </div>
     </div>
   );

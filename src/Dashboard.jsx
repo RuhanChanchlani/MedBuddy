@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Upload, FileText, Activity, Layers, HeartPulse, CheckCircle2, AlertTriangle, LogOut, User } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,12 +8,15 @@ import DiagnosticShuffler from './components/DiagnosticShuffler';
 import TelemetryTypewriter from './components/TelemetryTypewriter';
 import ProtocolScheduler from './components/ProtocolScheduler';
 import DiagnosisChatbot from './components/DiagnosisChatbot';
+import UploadAnalyzeModal from './components/UploadAnalyzeModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Dashboard() {
   const containerRef = useRef(null);
   const { user, signOut } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
@@ -78,7 +81,10 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="bg-moss text-cream px-6 py-2 rounded-full text-sm font-medium magnetic whitespace-nowrap">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-moss text-cream px-6 py-2 rounded-full text-sm font-medium magnetic whitespace-nowrap"
+            >
               Upload Summary
             </button>
             <button
@@ -119,7 +125,10 @@ export default function Dashboard() {
             The AI that sits between a patient and confusion. Upload your discharge summary or prescription for a clinically accurate, plain-language translation.
           </p>
           <div className="hero-text flex flex-col sm:flex-row gap-4">
-            <button className="bg-white text-moss px-8 py-4 rounded-[2rem] font-medium flex items-center justify-center gap-3 magnetic">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="bg-white text-moss px-8 py-4 rounded-[2rem] font-medium flex items-center justify-center gap-3 magnetic"
+            >
               <Upload className="w-5 h-5" />
               Upload Document
             </button>
@@ -142,7 +151,10 @@ export default function Dashboard() {
                 Our parsing engine ingests complex medical terminology and extracts a structured, actionable telemetry feed without hallucinating medical advice.
               </p>
               
-              <div className="bg-moss text-cream rounded-[2rem] p-8 flex flex-col items-center justify-center text-center mt-8 hover:bg-moss/90 transition-colors pointer-events-auto cursor-pointer border border-transparent hover:border-clay/30">
+              <div 
+                onClick={() => setIsModalOpen(true)}
+                className="bg-moss text-cream rounded-[2rem] p-8 flex flex-col items-center justify-center text-center mt-8 hover:bg-moss/90 transition-colors pointer-events-auto cursor-pointer border border-transparent hover:border-clay/30"
+              >
                 <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-6">
                   <Upload className="w-6 h-6 text-clay -mt-1" />
                 </div>
@@ -164,10 +176,10 @@ export default function Dashboard() {
             </div>
 
             <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <DiagnosticShuffler />
-              <TelemetryTypewriter />
+              <DiagnosticShuffler result={analysisResult} />
+              <TelemetryTypewriter text={analysisResult?.summary || "Waiting for clinical document input..."} />
               <div className="md:col-span-2">
-                <ProtocolScheduler />
+                <ProtocolScheduler medications={analysisResult?.medications} />
               </div>
             </div>
           </div>
@@ -189,15 +201,14 @@ export default function Dashboard() {
                <div className="bg-white p-6 rounded-[2rem] border border-black/5 flex items-start gap-4 shadow-sm">
                  <HeartPulse className="text-clay w-6 h-6 shrink-0 mt-1" />
                  <div>
-                   <h4 className="font-sans font-bold text-moss mb-2">Hypertension (High Blood Pressure)</h4>
+                   <h4 className="font-sans font-bold text-moss mb-2">Diagnosis Summary</h4>
                    <p className="text-sm text-charcoal/60 leading-relaxed">
-                     Your heart is currently working harder than normal to pump blood. This is manageable, and the prescribed medication will help relax your blood vessels to reduce this strain.
+                     {analysisResult?.oneLiner || "Awaiting document analysis to generate a plain-language summary."}
                    </p>
                  </div>
                </div>
             </div>
             <div className="order-1 md:order-2 flex justify-center">
-               {/* Visual representation: Rotating double helix or abstract representation */}
                <div className="w-[300px] h-[300px] rounded-full border border-moss/20 flex items-center justify-center relative">
                  <div className="w-[200px] h-[200px] rounded-full border border-clay animate-spin" style={{ animationDuration: '10s' }} />
                  <div className="absolute w-[150px] h-[150px] rounded-full border border-moss border-dashed animate-spin opacity-50" style={{ animationDuration: '15s', animationDirection: 'reverse' }} />
@@ -223,24 +234,25 @@ export default function Dashboard() {
                     <th className="py-4 font-mono text-xs uppercase text-charcoal/50 font-normal">Dosage</th>
                     <th className="py-4 font-mono text-xs uppercase text-charcoal/50 font-normal">Timing</th>
                     <th className="py-4 font-mono text-xs uppercase text-charcoal/50 font-normal">Duration</th>
-                    <th className="py-4 font-mono text-xs uppercase text-charcoal/50 font-normal">Notes</th>
+                    <th className="py-4 font-mono text-xs uppercase text-charcoal/50 font-normal">Purpose</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm md:text-base">
-                  <tr className="border-b border-black/5 hover:bg-cream/50 transition-colors">
-                    <td className="py-6 font-bold text-moss flex items-center gap-3"><Layers className="w-4 h-4 text-clay"/> Lisinopril</td>
-                    <td className="py-6 text-charcoal/80">10mg</td>
-                    <td className="py-6 text-charcoal/80">Morning (After Breakfast)</td>
-                    <td className="py-6 text-charcoal/80 font-mono">30 Days</td>
-                    <td className="py-6 text-charcoal/60">Take with water to prevent dry mouth</td>
-                  </tr>
-                  <tr className="border-b border-black/5 hover:bg-cream/50 transition-colors">
-                    <td className="py-6 font-bold text-moss flex items-center gap-3"><Layers className="w-4 h-4 text-clay"/> Atorvastatin</td>
-                    <td className="py-6 text-charcoal/80">20mg</td>
-                    <td className="py-6 text-charcoal/80">Night (Before Bed)</td>
-                    <td className="py-6 text-charcoal/80 font-mono">90 Days</td>
-                    <td className="py-6 text-charcoal/60">Avoid grapefruit juice</td>
-                  </tr>
+                  {analysisResult?.medications?.length > 0 ? (
+                    analysisResult.medications.map((m, i) => (
+                      <tr key={i} className="border-b border-black/5 hover:bg-cream/50 transition-colors">
+                        <td className="py-6 font-bold text-moss flex items-center gap-3"><Layers className="w-4 h-4 text-clay"/> {m.name}</td>
+                        <td className="py-6 text-charcoal/80">{m.dosage}</td>
+                        <td className="py-6 text-charcoal/80">{m.frequency}</td>
+                        <td className="py-6 text-charcoal/80 font-mono">{m.duration}</td>
+                        <td className="py-6 text-charcoal/60">{m.purpose}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="py-12 text-center text-charcoal/40 italic">No medications found. Awaiting analysis.</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -253,17 +265,16 @@ export default function Dashboard() {
             <div>
                <h2 className="text-4xl font-serif italic text-moss mb-8">Follow-up Checklist.</h2>
                <ul className="space-y-4">
-                 {[
-                   "Schedule blood test (Lipid Panel) in 3 weeks",
-                   "Monitor blood pressure daily at 9 AM",
-                   "Restrict sodium intake to < 2000mg/day",
-                   "Book follow-up appointment with Dr. Sharma"
-                 ].map((task, i) => (
-                   <li key={i} className="flex items-start gap-4 bg-white p-4 rounded-xl border border-black/5">
-                     <CheckCircle2 className="w-5 h-5 text-clay shrink-0 mt-0.5" />
-                     <span className="text-charcoal/80">{task}</span>
-                   </li>
-                 ))}
+                 {analysisResult?.follow_up?.length > 0 ? (
+                   analysisResult.follow_up.map((task, i) => (
+                     <li key={i} className="flex items-start gap-4 bg-white p-4 rounded-xl border border-black/5">
+                       <CheckCircle2 className="w-5 h-5 text-clay shrink-0 mt-0.5" />
+                       <span className="text-charcoal/80">{task}</span>
+                     </li>
+                   ))
+                 ) : (
+                   <li className="text-charcoal/40 italic">No follow-up items identified yet.</li>
+                 )}
                </ul>
             </div>
             <div>
@@ -273,14 +284,16 @@ export default function Dashboard() {
                    <AlertTriangle className="w-4 h-4 text-clay" /> Watch for these symptoms:
                  </p>
                  <div className="space-y-4">
-                   <div className="border-l-2 border-clay pl-4">
-                     <h4 className="font-bold text-moss">Persistent Dry Cough</h4>
-                     <p className="text-sm text-charcoal/60">Common with Lisinopril. If it disrupts sleep, contact the doctor.</p>
-                   </div>
-                   <div className="border-l-2 border-clay pl-4">
-                     <h4 className="font-bold text-moss">Unexplained Muscle Ache</h4>
-                     <p className="text-sm text-charcoal/60">Call doctor immediately if observed alongside dark urine.</p>
-                   </div>
+                   {analysisResult?.warnings?.length > 0 ? (
+                     analysisResult.warnings.map((w, i) => (
+                       <div key={i} className="border-l-2 border-clay pl-4">
+                         <h4 className="font-bold text-moss">Alert {i+1}</h4>
+                         <p className="text-sm text-charcoal/60">{w}</p>
+                       </div>
+                     ))
+                   ) : (
+                     <p className="text-charcoal/40 italic">No specific alerts found.</p>
+                   )}
                  </div>
                </div>
             </div>
@@ -326,7 +339,12 @@ export default function Dashboard() {
           </div>
         </div>
       </footer>
-      <DiagnosisChatbot />
+      <UploadAnalyzeModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onAnalysisComplete={(res) => setAnalysisResult(res)}
+      />
+      <DiagnosisChatbot docContext={analysisResult?.summary} />
     </div>
   );
 }

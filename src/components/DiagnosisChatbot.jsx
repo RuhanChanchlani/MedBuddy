@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, User, FileText, ChevronDown } from 'lucide-react';
+import { chatWithAssistant } from '../services/api';
 
-export default function DiagnosisChatbot() {
+export default function DiagnosisChatbot({ docContext }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { role: 'assistant', text: 'Hello. I can help translate your medical logs, discharge summaries, or answer questions about your diagnosis in plain English. How can I assist you today?' }
@@ -18,26 +19,29 @@ export default function DiagnosisChatbot() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!inputValue.trim()) return;
 
-    // Add user message
-    const newMessages = [...messages, { role: 'user', text: inputValue }];
+    const userMsg = inputValue.trim();
+    const newMessages = [...messages, { role: 'user', text: userMsg }];
     setMessages(newMessages);
     setInputValue('');
     setIsTyping(true);
 
-    // Mock AI response
-    setTimeout(() => {
+    try {
+      const reply = await chatWithAssistant(newMessages, docContext);
       setIsTyping(false);
       setMessages([
         ...newMessages,
-        { 
-          role: 'assistant', 
-          text: "Based on standard clinical pathways, I understand your concern. Could you upload the specific lab results or doctor's notes? That will allow me to give you a precise, functional translation without the confusing jargon."
-        }
+        { role: 'assistant', text: reply }
       ]);
-    }, 1500);
+    } catch (err) {
+      setIsTyping(false);
+      setMessages([
+        ...newMessages,
+        { role: 'assistant', text: "I'm sorry, I'm having trouble connecting to the clinical engine. Please check your connection and try again." }
+      ]);
+    }
   };
 
   const handleKeyDown = (e) => {
