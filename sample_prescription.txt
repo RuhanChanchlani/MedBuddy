@@ -1,0 +1,31 @@
+DR. ASHISH SHARMA, MD (Medicine)
+City Hospital & Research Center
+Date: 26 Oct 2026
+Patient: Demo Patient
+Age: 35  |  Sex: Male
+
+Diagnosis: 
+URTI (Upper Respiratory Tract Infection) with mild pharyngitis. 
+Vitals: Temp 101.4F, BP 120/80, Pulse 88.
+
+Rx:
+1. Tab Augmentin 625 Duo
+   Sig: 1 Tab BD (After meals) x 5 days
+   Note: Complete the full course.
+
+2. Tab Dolo 650
+   Sig: 1 Tab SOS (Only for fever >100F or body ache) x 3 days
+
+3. Cap Pan 40
+   Sig: 1 Cap OD (Before breakfast) x 5 days
+
+Advice / Follow-up:
+- Take complete rest for the next 3 days.
+- Drink plenty of warm fluids (water, soups).
+- Avoid cold beverages and spicy foods.
+- Call clinic immediately if you develop skin rash or difficulty breathing.
+- Follow up in OPD after 3 days if fever persists.
+
+Signature:
+Dr. Ashish Sharma
+Reg No: MCI-54321

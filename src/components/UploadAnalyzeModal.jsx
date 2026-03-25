@@ -251,6 +251,7 @@ export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete
                           <th className="py-3 font-mono text-xs uppercase text-charcoal/50 font-normal">Medicine</th>
                           <th className="py-3 font-mono text-xs uppercase text-charcoal/50 font-normal">Dosage</th>
                           <th className="py-3 font-mono text-xs uppercase text-charcoal/50 font-normal">Frequency</th>
+                          <th className="py-3 font-mono text-xs uppercase text-charcoal/50 font-normal">Duration</th>
                           <th className="py-3 font-mono text-xs uppercase text-charcoal/50 font-normal">Purpose</th>
                         </tr>
                       </thead>
@@ -260,6 +261,7 @@ export default function UploadAnalyzeModal({ isOpen, onClose, onAnalysisComplete
                             <td className="py-4 font-bold text-moss">{med.name}</td>
                             <td className="py-4 text-charcoal/80">{med.dosage || '—'}</td>
                             <td className="py-4 text-charcoal/80">{med.frequency || '—'}</td>
+                            <td className="py-4 text-charcoal/80 font-mono">{med.duration || '—'}</td>
                             <td className="py-4 text-charcoal/60">{med.purpose || '—'}</td>
                           </tr>
                         ))}
