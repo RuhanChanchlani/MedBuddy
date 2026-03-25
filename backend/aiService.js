@@ -149,6 +149,9 @@ module.exports = {
         return (await result.response).text();
       } catch (err) {
         console.error('Gemini Chat Error:', err.message);
+        if (docContext) {
+          return `Demo mode: Based on your analysis, it looks like you're asking about something related to your document. In a live environment, I would provide a detailed explanation. For now, please refer to the "Side-by-Side Comparison" section in the dashboard for jargon like "BD" or "TDS".`;
+        }
         return "Demo mode: I'm here to help! The AI is currently unavailable, but I can still guide you through general medical information.";
       }
     }

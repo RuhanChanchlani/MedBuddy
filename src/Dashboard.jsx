@@ -299,6 +299,38 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Card 4: Jargon Comparison */}
+        <div className="stack-card sticky top-0 h-screen w-full bg-white border-t border-black/5 flex items-center justify-center p-8 origin-top">
+          <div className="max-w-6xl w-full">
+            <div className="text-center mb-12">
+               <span className="text-clay font-mono text-sm uppercase tracking-widest mb-4 block">04 / Clarity</span>
+               <h2 className="text-5xl font-serif italic text-moss">Side-by-Side Comparison.</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {analysisResult?.jargon_comparison?.length > 0 ? (
+                analysisResult.jargon_comparison.map((j, i) => (
+                  <div key={i} className="bg-cream/50 p-6 rounded-[2rem] border border-black/5 flex flex-col h-full">
+                    <div className="flex items-center gap-2 mb-4">
+                      <FileText className="w-4 h-4 text-clay" />
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-charcoal/40">Medical Jargon</span>
+                    </div>
+                    <p className="font-serif italic text-lg text-moss mb-6 flex-1">"{j.original}"</p>
+                    <div className="pt-6 border-t border-black/5">
+                      <div className="text-[10px] font-mono uppercase text-clay mb-2">Plain Language</div>
+                      <p className="text-sm text-charcoal/70 leading-relaxed">{j.plain}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full py-20 text-center">
+                  <p className="text-charcoal/40 italic">No jargon comparison available. Awaiting document analysis.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Footer */}

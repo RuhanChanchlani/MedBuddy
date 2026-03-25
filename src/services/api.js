@@ -1,4 +1,4 @@
-const BACKEND_URL = 'http://127.0.0.1:5005/api';
+const BACKEND_URL = 'http://127.0.0.1:5000/api';
 
 /**
  * Analyze a medical document using the MedBuddy backend.
