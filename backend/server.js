@@ -15,12 +15,16 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api', routes);
 
 // Start server
-app.listen(config.PORT, '0.0.0.0', () => {
-  console.log(`MedBuddy Backend running on port ${config.PORT}`);
-  if (!config.ANTHROPIC_API_KEY) {
-    console.warn('WARNING: ANTHROPIC_API_KEY is not set in environment variables!');
+const server = app.listen(config.PORT, '0.0.0.0', () => {
+  console.log('-------------------------------------------');
+  console.log(`🚀 MedBuddy Backend: http://localhost:${config.PORT}`);
+  console.log(`🤖 AI Model: ${config.AI_MODEL.toUpperCase()}`);
+  console.log('-------------------------------------------');
+  
+  if (!config.GEMINI_API_KEY && config.AI_MODEL === 'gemini') {
+    console.warn('⚠️ WARNING: GEMINI_API_KEY is not set!');
   }
 });
 
-// Keep the process alive
-setInterval(() => {}, 1000);
+// Keep process alive
+setInterval(() => {}, 1000 * 60 * 60);

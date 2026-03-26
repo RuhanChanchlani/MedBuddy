@@ -17,7 +17,8 @@ CRITICAL SAFETY RULES:
 2. NEVER add extra medical advice, suggest alternative medicines, or pull in outside information.
 3. The medication table must match the prescription EXACTLY — wrong dosage or timing in the output is a direct patient safety failure.
 4. If information is missing, use "Not mentioned".
-5. If the document is not a medical document, return {"error": "Invalid document type"}.`;
+5. If the document is not a medical document, return {"error": "Invalid document type"}.
+6. CONFLICT DETECTION: Identify any potential conflicts between the prescribed medications or between a medication and a known condition (if mentioned). Use "Not mentioned" if none.`;
 
 const USER_PROMPT = (docType, age) => `Analyze this ${docType} for a patient aged ${age || 'unknown'}. 
 Provide the response EXACTLY in the following JSON format without markdown blocks:
@@ -44,10 +45,13 @@ Provide the response EXACTLY in the following JSON format without markdown block
       "original": "Original medical jargon phrase from the document",
       "plain": "Plain-language explanation of that exact phrase"
     }
+  ],
+  "conflicts": [
+    "Simple alert about drug-drug or drug-condition conflicts identified"
   ]
 } 
   
-Rules: medications must include ALL medicines listed, never change dosage/frequency/duration. warnings: 2–3 items. follow_up: simple tick list format. Empty array [] if no data. Provide 2-3 jargon comparisons.`;
+Rules: medications must include ALL medicines listed, never change dosage/frequency/duration. warnings: 2–3 items. follow_up: simple tick list format. Empty array [] if no data. Provide 2-3 jargon comparisons. conflicts: list any safety-critical conflicts.`;
 
 module.exports = {
   analyzeDocument: async (text, fileData, fileType, lang, age, docType) => {
@@ -139,12 +143,23 @@ module.exports = {
     if (config.AI_MODEL === 'gemini') {
       try {
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }, { apiVersion: 'v1' });
-        const chat = model.startChat({
-          history: messages.slice(0, -1).map(m => ({
-            role: m.role === 'user' ? 'user' : 'model',
-            parts: [{ text: m.text }],
-          })),
-        });
+        // Filter history to ensure it's valid for Gemini (must start with user, must alternate)
+        const history = [];
+        let expectedRole = 'user';
+        
+        for (const m of messages.slice(0, -1)) {
+          const role = m.role === 'user' ? 'user' : 'model';
+          // Gemini requires alternating roles starting with 'user'
+          if (role === expectedRole) {
+            history.push({
+              role: role,
+              parts: [{ text: m.text || m.content || "" }],
+            });
+            expectedRole = role === 'user' ? 'model' : 'user';
+          }
+        }
+
+        const chat = model.startChat({ history });
         const result = await chat.sendMessage(`${system}\n\nUser: ${messages[messages.length - 1].text}`);
         return (await result.response).text();
       } catch (err) {
@@ -206,6 +221,9 @@ function getSimulatedAnalysis(lang, docType) {
           original: "TDS (Ter die sumendum)",
           plain: "Three times a day"
         }
+      ],
+      conflicts: [
+        "No major conflicts detected for these medications."
       ]
     },
     report: {
@@ -238,6 +256,9 @@ function getSimulatedAnalysis(lang, docType) {
           original: "Serum 25-hydroxy Vitamin D",
           plain: "A standard blood test for Vitamin D levels"
         }
+      ],
+      conflicts: [
+        "Not mentioned"
       ]
     }
   };
